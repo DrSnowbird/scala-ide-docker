@@ -1,0 +1,16 @@
+version: '3' 
+services:
+  docker-nebteans:
+    image: openkbs/scala-ide-docker
+    build:
+      context: ./Dockerfile
+    container_name: docker-scala-ide-docker
+    environment:
+      - USER_ID=${USER_ID:-1100}
+      - GROUP_ID=${GROUP_ID:-1100}
+    env_file:
+      - ./docker.env
+    volumes:
+      - ./.scala-ide-docker:/home/developer/.scala-ide-docker
+      - ./workspace:/home/developer/workspace
+
