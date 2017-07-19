@@ -1,5 +1,7 @@
 # Docker-based Netbeans
 * Eclipse Scala IDE in a Docker container
+* SCALA_VERSION=2.12.2
+* SBT_VERSION=0.13.15
 
 ## Requirements
 * Docker 1.13.1+ 
