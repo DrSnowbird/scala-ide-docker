@@ -1,3 +1,5 @@
 .fuse*
 parts.out
+eclipse/
+*.tar.gz
 

@@ -5,7 +5,18 @@ MAINTAINER DrSnowbird "DrSnowbird@openkbs.org"
 ARG SCALA_IDE_VERSION=${SCALA_IDE_VERSION:-"4.6.1"}
 ENV SCALA_IDE_VERSION=${SCALA_IDE_VERSION}
 
-ENV SCALA_VERSION=2.12.2
+#Eclipse 4.7.1 (Oxygen)
+#Scala IDE 4.7.0
+#Scala 2.12.3 with Scala 2.11.11 and Scala 2.10.6
+#Zinc 1.0.0
+#Scala Worksheet 0.7.0
+#ScalaTest 2.10.0.v-4-2_12
+#Scala Refactoring 0.13.0
+#Scala Search 0.6.0
+#Scala IDE Play2 Plugin 0.10.0
+#Scala IDE Lagom Plugin 1.0.0
+
+ENV SCALA_VERSION=2.12.3
 ENV SBT_VERSION=0.13.15
 
 ## ---- USER_NAME is defined in parent image: openkbs/jre-mvn-py3-x11 already ----
@@ -15,10 +26,14 @@ ENV HOME=/home/${USER_NAME}
 # Scala expects this file
 #RUN touch /usr/lib/jvm/java-8-openjdk-amd64/release
     
-## ---- Install Scala ----
-## Piping curl directly in tar
+############################
+#### ---- Install Scala ----
+############################
+#### Piping curl directly in tar
 WORKDIR /usr/local
-RUN wget -c http://downloads.typesafe.com/scala/${SCALA_VERSION}/scala-${SCALA_VERSION}.tgz && \
+# https://downloads.lightbend.com/scala/2.12.3/scala-2.12.3.tgz
+# http://downloads.typesafe.com/scalaide-pack/4.7.0-vfinal-oxygen-212-20170929/scala-SDK-4.7.0-vfinal-2.12-linux.gtk.x86_64.tar.gz
+RUN wget -c https://downloads.lightbend.com/scala/${SCALA_VERSION}/scala-${SCALA_VERSION}.tgz && \
     tar xvf scala-${SCALA_VERSION}.tgz && \
     rm scala-${SCALA_VERSION}.tgz && \
     ls /usr/local && \
@@ -26,7 +41,9 @@ RUN wget -c http://downloads.typesafe.com/scala/${SCALA_VERSION}/scala-${SCALA_V
     echo >> ${HOME}/.bashrc && \
     echo "export PATH=/usr/local/scala-${SCALA_VERSION}/bin:$PATH" >> ${HOME}/.bashrc
 
-## ---- Install sbt ----
+##########################
+#### ---- Install sbt ----
+##########################
 WORKDIR /tmp
 RUN apt-get install -y apt-transport-https ca-certificates libcurl3-gnutls && \
     echo "deb https://dl.bintray.com/sbt/debian /" | tee -a /etc/apt/sources.list.d/sbt.list && \
@@ -36,12 +53,24 @@ RUN apt-get install -y apt-transport-https ca-certificates libcurl3-gnutls && \
     
 WORKDIR ${HOME}
 # http://downloads.typesafe.com/scalaide-pack/4.6.1-vfinal-neon-212-20170609/scala-SDK-4.6.1-vfinal-2.12-linux.gtk.x86_64.tar.gz
-RUN wget -c http://downloads.typesafe.com/scalaide-pack/4.6.1-vfinal-neon-212-20170609/scala-SDK-4.6.1-vfinal-2.12-linux.gtk.x86_64.tar.gz && \
-    tar xvf scala-SDK-4.6.1-vfinal-2.12-linux.gtk.x86_64.tar.gz 
+#####################################
+#### ---- MODIFY two lines below ----
+#####################################
+ENV SCALA_IDE_TAR=scala-SDK-4.7.0-vfinal-2.12-linux.gtk.x86_64.tar.gz
+ENV SCALA_IDE_DOWNLOAD_FOLDER=4.7.0-vfinal-oxygen-212-20170929
+## -- (Release build) --
+# http://downloads.typesafe.com/scalaide-pack/4.7.0-vfinal-oxygen-212-20170929/scala-SDK-4.7.0-vfinal-2.12-linux.gtk.x86_64.tar.gz
+RUN wget -c http://downloads.typesafe.com/scalaide-pack/${SCALA_IDE_DOWNLOAD_FOLDER}/${SCALA_IDE_TAR} && \
+    tar xvf ${SCALA_IDE_TAR} && \
+    rm ${SCALA_IDE_TAR}
+## -- (Local build) --
+#COPY scala-SDK-4.7.0-vfinal-2.12-linux.gtk.x86_64.tar.gz ./
+#RUN tar xvf ${SCALA_IDE_TAR} && \
+#    rm ${SCALA_IDE_TAR}
 
 RUN mkdir -p ${HOME}/workspace
 VOLUME ${HOME}/workspace
     
 USER ${USER_NAME}
 
-CMD "${HOME}/eclipse/eclise"
+CMD "${HOME}/eclipse/eclipse"
