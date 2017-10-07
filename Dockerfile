@@ -30,16 +30,30 @@ ENV HOME=/home/${USER_NAME}
 #### ---- Install Scala ----
 ############################
 #### Piping curl directly in tar
-WORKDIR /usr/local
+ENV SCALA_INSTALL_BASE=/usr/local
+WORKDIR ${SCALA_INSTALL_BASE}
 # https://downloads.lightbend.com/scala/2.12.3/scala-2.12.3.tgz
-# http://downloads.typesafe.com/scalaide-pack/4.7.0-vfinal-oxygen-212-20170929/scala-SDK-4.7.0-vfinal-2.12-linux.gtk.x86_64.tar.gz
 RUN wget -c https://downloads.lightbend.com/scala/${SCALA_VERSION}/scala-${SCALA_VERSION}.tgz && \
     tar xvf scala-${SCALA_VERSION}.tgz && \
     rm scala-${SCALA_VERSION}.tgz && \
     ls /usr/local && \
-    echo ${JAVA_HOME} && \
-    echo >> ${HOME}/.bashrc && \
-    echo "export PATH=/usr/local/scala-${SCALA_VERSION}/bin:$PATH" >> ${HOME}/.bashrc
+    echo "#!/bin/bash" > /etc/profile.d/scala.sh && \
+    echo "export SCALA_VERSION=${SCALA_VERSION}" >> /etc/profile.d/scala.sh && \
+    echo "export SCALA_HOME=${SCALA_INSTALL_BASE}/scala-${SCALA_VERSION}" >> /etc/profile.d/scala.sh && \
+    echo "export PATH=${SCALA_INSTALL_BASE}/scala-${SCALA_VERSION}/bin:$PATH" >> /etc/profile.d/scala.sh && \
+    echo "export CLASSPATH=\${SCALA_HOME}/bin:\$CLASSPATH" >> /etc/profile.d/scala.sh
+
+#ENV SCALA_INSTALL_BASE=/usr/lib
+#WORKDIR ${SCALA_INSTALL_BASE}
+#RUN wget -c https://downloads.lightbend.com/scala/${SCALA_VERSION}/scala-${SCALA_VERSION}.deb && \
+#    sudo apt-get install -y scala-${SCALA_VERSION}.deb && \
+#    rm scala-${SCALA_VERSION}.deb && \
+#    ls ${SCALA_INSTALL_BASE} && \
+#    echo "#!/bin/bash" > /etc/profile.d/scala.sh && \
+#    echo "export SCALA_VERSION=${SCALA_VERSION}" >> /etc/profile.d/scala.sh
+#    echo "export SCALA_HOME=/usr/lib/scala-${SCALA_VERSION}" >> /etc/profile.d/scala.sh
+#    echo "export PATH=${SCALA_INSTALL_BASE}/scala-${SCALA_VERSION}/bin:$PATH" >> /etc/profile.d/scala.sh
+#    echo "export CLASSPATH=\$SCALA_HOME/bin:\$CLASSPATH" >> /etc/profile.d/scala.sh
 
 ##########################
 #### ---- Install sbt ----

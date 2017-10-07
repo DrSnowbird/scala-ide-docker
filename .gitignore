@@ -2,4 +2,4 @@
 parts.out
 eclipse/
 *.tar.gz
-
+*.deb
