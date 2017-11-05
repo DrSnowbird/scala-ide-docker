@@ -13,7 +13,7 @@ function displayPortainerURL() {
     port=${1}
     echo "... Go to: http://${MY_IP}:${port}"
     #firefox http://${MY_IP}:${port} &
-    if [ "`which google-chrome`" != "" ]; then 
+    if [ "`which google-chrome`" != "" ]; then
         /usr/bin/google-chrome http://${MY_IP}:${port} &
     else
         firefox http://${MY_IP}:${port} &
@@ -29,14 +29,23 @@ imageTag=${1:-"openkbs/scala-ide-docker"}
 
 PACKAGE=`echo ${imageTag##*/}|tr "/\-: " "_"`
 
-docker_volume_data1=/home/developer/.scala-ide
-docker_volume_data2=/home/developer/workspace
-local_docker_data1=${baseDataFolder}/${PACKAGE}/.scala-ide
-local_docker_data2=${baseDataFolder}/${PACKAGE}/workspace
+docker_volume_data1=/home/developer/workspace
+docker_volume_data2=/home/developer/.eclipse
+docker_volume_data3=/home/developer/.m2
+docker_volume_data4=/home/developer/.oracle_jre_usage
+docker_volume_data5=/home/developer/.scalaide
+local_docker_data1=${baseDataFolder}/${PACKAGE}/workspace
+local_docker_data2=${baseDataFolder}/${PACKAGE}/.eclipse
+local_docker_data3=${baseDataFolder}/${PACKAGE}/.m2
+local_docker_data4=${baseDataFolder}/${PACKAGE}/.oracle_jre_usage
+local_docker_data5=${baseDataFolder}/${PACKAGE}/.scalaide
 
 #### ---- local data folders on the host ----
 mkdir -p ${local_docker_data1}
 mkdir -p ${local_docker_data2}
+mkdir -p ${local_docker_data3}
+mkdir -p ${local_docker_data4}
+mkdir -p ${local_docker_data5}
 
 #### ---- ports mapping ----
 docker_port1=
@@ -65,8 +74,11 @@ docker run -ti --rm \
     -v /tmp/.X11-unix:/tmp/.X11-unix \
     -v ${local_docker_data1}:${docker_volume_data1} \
     -v ${local_docker_data2}:${docker_volume_data2} \
+    -v ${local_docker_data3}:${docker_volume_data3} \
+    -v ${local_docker_data4}:${docker_volume_data4} \
+    -v ${local_docker_data5}:${docker_volume_data5} \
     ${imageTag} /home/developer/eclipse/eclipse
-    
+
 echo ">>> Docker Status"
 docker ps -a | grep "${instanceName}"
 echo "-----------------------------------------------"
@@ -75,4 +87,3 @@ echo "docker exec -it ${instanceName} /bin/bash"
 
 #### ---- Display IP:Port URL ----
 #displayPortainerURL ${local_docker_port1}
-
