@@ -1,6 +1,7 @@
 FROM openkbs/jre-mvn-py3-x11
 
 MAINTAINER DrSnowbird "DrSnowbird@openkbs.org"
+MAINTAINER OpenKBS "openkbs.org@gmail.com"
 
 ARG SCALA_IDE_VERSION=${SCALA_IDE_VERSION:-"4.6.1"}
 ENV SCALA_IDE_VERSION=${SCALA_IDE_VERSION}
@@ -8,28 +9,23 @@ ENV SCALA_IDE_VERSION=${SCALA_IDE_VERSION}
 #Eclipse 4.7.1 (Oxygen)
 #Scala IDE 4.7.0
 #Scala 2.12.3 with Scala 2.11.11 and Scala 2.10.6
-#Zinc 1.0.0
-#Scala Worksheet 0.7.0
-#ScalaTest 2.10.0.v-4-2_12
-#Scala Refactoring 0.13.0
-#Scala Search 0.6.0
-#Scala IDE Play2 Plugin 0.10.0
-#Scala IDE Lagom Plugin 1.0.0
 
-ENV SCALA_VERSION=2.12.3
-ENV SBT_VERSION=0.13.15
+ARG SCALA_VERSION=${SCALA_VERSION:-"2.12.3"}
+ENV SCALA_VERSION=${SCALA_VERSION}
+ARG SBT_VERSION=${SBT_VERSION:-"0.13.15"}
+ENV SBT_VERSION=${SBT_VERSION}
 
 ## ---- USER_NAME is defined in parent image: openkbs/jre-mvn-py3-x11 already ----
 ENV USER_NAME=${USER_NAME:-developer}
 ENV HOME=/home/${USER_NAME}
-
-# Scala expects this file
-#RUN touch /usr/lib/jvm/java-8-openjdk-amd64/release
     
 ############################
 #### ---- Install Scala ----
 ############################
-#### Piping curl directly in tar
+## (Optional if you want make Docker Shell to have its own Scala - not fomr Eclipse Scala IDE) 
+## Scala-IDE already has built-in with older versions of Scala.
+## If you don't want the latest Scala, you can just comment out the following block
+##
 ENV SCALA_INSTALL_BASE=/usr/local
 WORKDIR ${SCALA_INSTALL_BASE}
 # https://downloads.lightbend.com/scala/2.12.3/scala-2.12.3.tgz
@@ -43,6 +39,7 @@ RUN wget -c https://downloads.lightbend.com/scala/${SCALA_VERSION}/scala-${SCALA
     echo "export PATH=${SCALA_INSTALL_BASE}/scala-${SCALA_VERSION}/bin:$PATH" >> /etc/profile.d/scala.sh && \
     echo "export CLASSPATH=\${SCALA_HOME}/bin:\$CLASSPATH" >> /etc/profile.d/scala.sh
 
+# (alternate: using DEB package to install)
 #ENV SCALA_INSTALL_BASE=/usr/lib
 #WORKDIR ${SCALA_INSTALL_BASE}
 #RUN wget -c https://downloads.lightbend.com/scala/${SCALA_VERSION}/scala-${SCALA_VERSION}.deb && \
@@ -70,13 +67,17 @@ WORKDIR ${HOME}
 #####################################
 #### ---- MODIFY two lines below ----
 #####################################
+## Customized here: the tar ball is URL doesn't have naming pattern like JDK or other FOSS model.
+## Hence, we need to customize URL specifics for each new release.
 ENV SCALA_IDE_TAR=scala-SDK-4.7.0-vfinal-2.12-linux.gtk.x86_64.tar.gz
 ENV SCALA_IDE_DOWNLOAD_FOLDER=4.7.0-vfinal-oxygen-212-20170929
+
 ## -- (Release build) --
 # http://downloads.typesafe.com/scalaide-pack/4.7.0-vfinal-oxygen-212-20170929/scala-SDK-4.7.0-vfinal-2.12-linux.gtk.x86_64.tar.gz
 RUN wget -c http://downloads.typesafe.com/scalaide-pack/${SCALA_IDE_DOWNLOAD_FOLDER}/${SCALA_IDE_TAR} && \
     tar xvf ${SCALA_IDE_TAR} && \
     rm ${SCALA_IDE_TAR}
+
 ## -- (Local build) --
 #COPY scala-SDK-4.7.0-vfinal-2.12-linux.gtk.x86_64.tar.gz ./
 #RUN tar xvf ${SCALA_IDE_TAR} && \

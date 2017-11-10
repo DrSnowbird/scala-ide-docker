@@ -1,11 +1,13 @@
-# Docker-based Netbeans
+# Docker-based Eclipse Scala-IDE
 * Eclipse Scala IDE in a Docker container
-* SCALA_VERSION=2.12.2
-* SBT_VERSION=0.13.15
+- Eclipse 4.7.1 (Oxygen)
+- Scala IDE 4.7.0
+- Scala 2.12.3 with Scala 2.11.11 and Scala 2.10.6
+- Docker containers installed Scala 2.12.3 for Docker shell
 
 ## Requirements
-* Docker 1.13.1+ 
-* An X11 socket
+* Docker 1.13.1+ or Docker CE 17.05.0-ce above.
+* An X11 socket on the host: mostly, your CentOS or Ubuntu host already has it - you don't have do anything!)
 
 ## Build
 ```
@@ -38,12 +40,12 @@ docker run -ti --rm \
 
 You might have an issue with the X11 socket permissions since the default user
 used by the base image has an user and group ids set to `1000`, two options:
-* Create your own base image with the appropriate ids or 
+* Create your own base image with the appropriate ids or
 * Or, at the host, run
 ```
-`xhost +` 
+`xhost +`
 ```
-try again.
+Then, try again.
 
 ## Reference
 * http://scala-ide.org/download/sdk.html
