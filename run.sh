@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 if [ $# -lt 1 ]; then
     echo "Usage: "
@@ -9,7 +9,7 @@ fi
 #### **** Container package information ****
 ###################################################
 MY_IP=`ip route get 1|awk '{print$NF;exit;}'`
-DOCKER_IMAGE_REPO=`echo $(basename $PWD)|tr '[:upper:]' '[:lower:]' `
+DOCKER_IMAGE_REPO=`echo $(basename $PWD)|tr '[:upper:]' '[:lower:]'|tr "/: " "_" `
 imageTag=${1:-"openkbs/${DOCKER_IMAGE_REPO}"}
 #PACKAGE=`echo ${imageTag##*/}|tr "/\-: " "_"`
 PACKAGE="${imageTag##*/}"
@@ -17,8 +17,8 @@ baseDataFolder="$HOME/data-docker"
 
 ###################################################
 #### ---- Volumes to be mapped (change this!) -----
-#################################################### (examples - some local vars)
-# (exampples)
+###################################################
+# (example - some local vars)
 # IDEA_PRODUCT_NAME="IdeaIC2017"
 # IDEA_PRODUCT_VERSION="3"
 # IDEA_INSTALL_DIR="${IDEA_PRODUCT_NAME}.${IDEA_PRODUCT_VERSION}"
@@ -67,9 +67,9 @@ echo ${VOLUME_MAP}
 
 #instanceName=my-${1:-${imageTag%/*}}_$RANDOM
 #instanceName=my-${1:-${imageTag##*/}}
-## -- transform '-' and space to '_' 
-instanceName=`echo $(basename ${imageTag})|tr '[:upper:]' '[:lower:]'|tr "/\-: " "_"`
-
+## -- transform white spaces to '_': 
+#instanceName=`echo $(basename ${imageTag})|tr '[:upper:]' '[:lower:]'|tr "/\-: " "_"`
+instanceName=`echo $(basename ${imageTag})|tr '[:upper:]' '[:lower:]'|tr "/: " "_"`
 echo "---------------------------------------------"
 echo "---- Starting a Container for ${imageTag}"
 echo "---------------------------------------------"

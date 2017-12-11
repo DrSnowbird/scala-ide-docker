@@ -3,15 +3,12 @@ FROM openkbs/jre-mvn-py3-x11
 MAINTAINER DrSnowbird "DrSnowbird@openkbs.org"
 MAINTAINER OpenKBS "openkbs.org@gmail.com"
 
-############################################
-#### ---- MODIFY those four lines below ----
-############################################
-## Customized here: the tar ball is URL doesn't have naming pattern like JDK or other FOSS model.
 ARG SCALA_IDE_VERSION=${SCALA_IDE_VERSION:-"4.7.0"}
 ENV SCALA_IDE_VERSION=${SCALA_IDE_VERSION}
-## Hence, we need to customize URL specifics for each new release.
-ENV SCALA_IDE_TAR=scala-SDK-4.7.0-vfinal-2.12-linux.gtk.x86_64.tar.gz
-ENV SCALA_IDE_DOWNLOAD_FOLDER=4.7.0-vfinal-oxygen-212-20170929
+ARG SCALA_IDE_BUILD_VERSION=${SCALA_IDE_BUILD_VERSION:-"2.12"}
+ENV SCALA_IDE_BUILD_VERSION=${SCALA_IDE_BUILD_VERSION}
+ARG SCALA_IDE_BUILD_DATE=${SCALA_IDE_BUILD_DATE:-"2.12"}
+ENV SCALA_IDE_BUILD_DATE=${SCALA_IDE_BUILD_DATE}
 
 #Eclipse 4.7.1 (Oxygen)
 #Scala IDE 4.7.0
@@ -69,10 +66,20 @@ RUN apt-get install -y apt-transport-https ca-certificates libcurl3-gnutls && \
     apt-get update && \
     apt-get install -y sbt
     
+WORKDIR ${HOME}
+# http://downloads.typesafe.com/scalaide-pack/4.6.1-vfinal-neon-212-20170609/scala-SDK-4.6.1-vfinal-2.12-linux.gtk.x86_64.tar.gz
 #####################################
 #### ---- MODIFY two lines below ----
 #####################################
-WORKDIR ${HOME}
+## Customized here: the tar ball is URL doesn't have naming pattern like JDK or other FOSS model.
+## Hence, we need to customize URL specifics for each new release.
+
+#ENV SCALA_IDE_TAR=scala-SDK-4.7.0-vfinal-2.12-linux.gtk.x86_64.tar.gz
+ENV SCALA_IDE_TAR=scala-SDK-${SCALA_IDE_VERSION}-vfinal-${SCALA_IDE_BUILD_VERSION}-linux.gtk.x86_64.tar.gz
+#ENV SCALA_IDE_DOWNLOAD_FOLDER=4.7.0-vfinal-oxygen-212-20170929
+ARG 
+ENV SCALA_IDE_DOWNLOAD_FOLDER=${SCALA_IDE_VERSION}-vfinal-oxygen-212-20170929
+
 ## -- (Release build) --
 # http://downloads.typesafe.com/scalaide-pack/4.7.0-vfinal-oxygen-212-20170929/scala-SDK-4.7.0-vfinal-2.12-linux.gtk.x86_64.tar.gz
 RUN wget -c http://downloads.typesafe.com/scalaide-pack/${SCALA_IDE_DOWNLOAD_FOLDER}/${SCALA_IDE_TAR} && \
