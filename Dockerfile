@@ -41,7 +41,7 @@ RUN wget -c https://downloads.lightbend.com/scala/${SCALA_VERSION}/scala-${SCALA
     echo "export SCALA_VERSION=${SCALA_VERSION}" >> /etc/profile.d/scala.sh && \
     echo "export SCALA_HOME=${SCALA_INSTALL_BASE}/scala-${SCALA_VERSION}" >> /etc/profile.d/scala.sh && \
     echo "export PATH=${SCALA_INSTALL_BASE}/scala-${SCALA_VERSION}/bin:$PATH" >> /etc/profile.d/scala.sh && \
-    echo "export CLASSPATH=\${SCALA_HOME}/bin:\$CLASSPATH" >> /etc/profile.d/scala.sh
+    echo "export CLASSPATH=\${SCALA_HOME}/lib:\$CLASSPATH" >> /etc/profile.d/scala.sh
 
 #ENV SCALA_INSTALL_BASE=/usr/lib
 #WORKDIR ${SCALA_INSTALL_BASE}
